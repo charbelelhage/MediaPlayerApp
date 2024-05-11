@@ -9,19 +9,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private DatabaseHelper databaseHelper;
+    private FirebaseAuth auth; // Firebase Authentication instance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        databaseHelper = new DatabaseHelper(this);
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance();
+
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         Button buttonLogin = findViewById(R.id.buttonLogin);
@@ -30,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                verifyFromSQLite();
+                loginUser();
             }
         });
 
@@ -40,21 +42,30 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void verifyFromSQLite() {
-        if (databaseHelper.checkUser(editTextEmail.getText().toString().trim(),
-                editTextPassword.getText().toString().trim())) {
-            Spotify.getAccessToken();try {
-                Thread.sleep(3000); // Sleep for 5 seconds (5000 milliseconds)
-            } catch (InterruptedException e) {
-                // Handle interrupted exception if needed
-            }
-            Intent accountsIntent = new Intent(LoginActivity.this, MainActivity.class);
-            accountsIntent.putExtra("EMAIL", editTextEmail.getText().toString().trim());
-            emptyInputEditText();
-            startActivity(accountsIntent);
-        } else {
-            Toast.makeText(this, "Wrong Email or Password", Toast.LENGTH_LONG).show();
-        }
+    private void loginUser() {
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+
+        // Authenticate with Firebase using email and password
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Spotify.getAccessToken();try {
+                            Thread.sleep(3000); // Sleep for 5 seconds (5000 milliseconds)
+                        } catch (InterruptedException e) {
+                            // Handle interrupted exception if needed
+                        }
+                        // Sign in success, update UI with the signed-in user's information
+                        Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("EMAIL", auth.getCurrentUser().getEmail());
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     private void emptyInputEditText() {
