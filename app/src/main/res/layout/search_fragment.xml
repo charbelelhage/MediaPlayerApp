@@ -14,5 +14,23 @@
         android:hint="Search music"
         android:inputType="text"/>
 
+    <TextView
+        android:id="@+id/textView_recommendation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recommendations"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"/>
+
+    <ListView
+        android:id="@+id/listView_songs"
+        android:layout_width="match_parent"
+        android:layout_height="714dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
+
     <!-- Optionally add a RecyclerView or other components to display search results -->
 </LinearLayout>
