@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="115dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <!-- Album Card 1 -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+        android:layout_height="160dp"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+            <TextView
+            android:id="@+id/textView_albumId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView_album"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/media_player_background" />
+
+            <TextView
+                android:id="@+id/textView_albumName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Album 1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:id="@+id/textView_artistName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Artist 1"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+
+            <TextView
+                android:id="@+id/textView_totalTracks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Tracks: 10"
+                android:textSize="10sp"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+</LinearLayout>

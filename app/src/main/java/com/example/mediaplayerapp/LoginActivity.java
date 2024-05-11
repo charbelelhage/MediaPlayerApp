@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText editTextEmail;
     private EditText editTextPassword;
@@ -41,6 +43,11 @@ public class LoginActivity extends AppCompatActivity {
     private void verifyFromSQLite() {
         if (databaseHelper.checkUser(editTextEmail.getText().toString().trim(),
                 editTextPassword.getText().toString().trim())) {
+            Spotify.getAccessToken();try {
+                Thread.sleep(3000); // Sleep for 5 seconds (5000 milliseconds)
+            } catch (InterruptedException e) {
+                // Handle interrupted exception if needed
+            }
             Intent accountsIntent = new Intent(LoginActivity.this, MainActivity.class);
             accountsIntent.putExtra("EMAIL", editTextEmail.getText().toString().trim());
             emptyInputEditText();

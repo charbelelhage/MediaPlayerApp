@@ -233,7 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_SONGS, null);
         if (cursor.moveToFirst()) {
             do {
-                long id = cursor.getLong(cursor.getColumnIndex(KEY_SONG_ID));
+                String id = String.valueOf(cursor.getLong(cursor.getColumnIndex(KEY_SONG_ID)));
                 String title = cursor.getString(cursor.getColumnIndex(KEY_SONG_TITLE));
                 long albumId = cursor.getLong(cursor.getColumnIndex(KEY_SONG_ALBUM_ID));
                 String path = cursor.getString(cursor.getColumnIndex(KEY_SONG_PATH));

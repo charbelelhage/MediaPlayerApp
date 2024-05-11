@@ -1,5 +1,7 @@
 package com.example.mediaplayerapp;
 
+import static com.example.mediaplayerapp.Spotify.getAllPlaylists;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +18,11 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
     private ListView listViewSongs;
-    private List<Song> songsList;
+    private ListView listViewAlbums;
+    private List<Song> likedSongsList;
+    private List<Album> newRelesedAlbumsList;
     private DatabaseHelper databaseHelper;
+    private String mp3Url = "https://p.scdn.co/mp3-preview/8196f1d0cb4c14a5a5bd1ab078c6893b30dab102?cid=cfe923b2d660439caf2b557b21f31221";
 
     @Nullable
     @Override
@@ -25,19 +30,20 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        System.out.println("My variable value: " + Spotify.getAccessTokenValue());
 
         listViewSongs = view.findViewById(R.id.listView_songs);
-        songsList = new ArrayList<>();
-        databaseHelper = new DatabaseHelper(getActivity()); // Corrected context usage
+        likedSongsList = Spotify.getLikedTracks();
 
-        // Fetch all songs from the database
-        songsList = databaseHelper.getAllSongs();
-
-        // Create a custom adapter to display songs with images
-        SongAdapter adapter = new SongAdapter(getActivity(), songsList); // Corrected context usage
+        SongAdapter adapter = new SongAdapter(getActivity(), likedSongsList); // Corrected context usage
         listViewSongs.setAdapter(adapter);
 
-        return view; // Return the view at the end
+        listViewAlbums = view.findViewById(R.id.listView_albums);
+        newRelesedAlbumsList = Spotify.getNewReleasedAlbums();
+        AlbumAdapter albumAdapter = new AlbumAdapter(getActivity(), newRelesedAlbumsList); // Corrected context usage
+        listViewAlbums.setAdapter(albumAdapter);
+
+        return view;
     }
 
 
