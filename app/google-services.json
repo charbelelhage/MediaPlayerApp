@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1022160475463",
+    "project_id": "mediaplayer-8a75a",
+    "storage_bucket": "mediaplayer-8a75a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022160475463:android:0110bc41fb31ae1b5be862",
+        "android_client_info": {
+          "package_name": "com.example.mediaplayerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAExUDZ7NP8WnCdwxTuYgfqCFFvKEPHRpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
