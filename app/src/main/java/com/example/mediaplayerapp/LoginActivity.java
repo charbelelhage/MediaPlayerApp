@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private void verifyFromSQLite() {
         if (databaseHelper.checkUser(editTextEmail.getText().toString().trim(),
                 editTextPassword.getText().toString().trim())) {
-            Intent accountsIntent = new Intent(LoginActivity.this, MediaPlayerActivity.class);
+            Intent accountsIntent = new Intent(LoginActivity.this, MainActivity.class);
             accountsIntent.putExtra("EMAIL", editTextEmail.getText().toString().trim());
             emptyInputEditText();
             startActivity(accountsIntent);
