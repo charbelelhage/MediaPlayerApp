@@ -38,7 +38,7 @@
 
     <ListView
         android:id="@+id/listView_albums"
-        android:layout_width="115dp"
+        android:layout_width="match_parent"
         android:layout_height="137dp"
         android:layout_weight="1"
         android:divider="@null"
