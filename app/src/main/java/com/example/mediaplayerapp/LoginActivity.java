@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity {
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private FirebaseAuth auth; // Firebase Authentication instance
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +51,15 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Spotify.getAccessToken();try {
-                            Thread.sleep(3000); // Sleep for 5 seconds (5000 milliseconds)
+                            Thread.sleep(3000);
                         } catch (InterruptedException e) {
-                            // Handle interrupted exception if needed
                         }
-                        // Sign in success, update UI with the signed-in user's information
                         Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("EMAIL", auth.getCurrentUser().getEmail());
                         startActivity(intent);
                         finish();
                     } else {
-                        // If sign in fails, display a message to the user.
                         Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });

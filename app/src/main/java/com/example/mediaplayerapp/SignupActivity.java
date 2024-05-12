@@ -30,7 +30,6 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // Initialize Firebase Auth and Firestore
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -70,7 +69,6 @@ public class SignupActivity extends AppCompatActivity {
         String password = editTextPassword.getText().toString().trim();
         String sector = sectorsSpinner.getSelectedItem().toString();
 
-        // Create a new user with Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
