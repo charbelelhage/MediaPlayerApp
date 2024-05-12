@@ -50,11 +50,15 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void loadSectors() {
-        firestoreHelper.fetchSectors(new FirestoreHelper.FirestoreCallback() {
+        firestoreHelper.fetchSectors(new FirestoreHelper.FirestoreCallback<List<String>>() {
             @Override
             public void onCallback(List<String> sectorNames) {
+                // Create an ArrayAdapter using the string array and a default spinner layout
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(SignupActivity.this,
                         android.R.layout.simple_spinner_dropdown_item, sectorNames);
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // Apply the adapter to the spinner
                 sectorsSpinner.setAdapter(adapter);
             }
 

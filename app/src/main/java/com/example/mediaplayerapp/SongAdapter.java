@@ -14,6 +14,7 @@ import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -74,14 +75,15 @@ public class SongAdapter extends ArrayAdapter<Song> {
                         mediaPlayer.start();
                         currentPlayingUrl = currentSong.getPath();
                         playButton.setImageResource(R.drawable.ic_pause);
+
+                        // Save the music preference
+                        saveMusicPreference(currentSong);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e("MediaPlayer", "Error playing song", e);
                     }
                 }
             }
-
         });
-
         return listItem;
     }
     public String formatDuration(long durationInMillis) {
@@ -107,6 +109,39 @@ public class SongAdapter extends ArrayAdapter<Song> {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    private void saveMusicPreference(Song song) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Ensure user is logged in
+        new FirestoreHelper().fetchUserSector(userId, new FirestoreHelper.FirestoreCallback<String>() {
+            @Override
+            public void onCallback(String sector) {
+                if (sector != null) {
+                    MusicPreference musicPreference = new MusicPreference(
+                            sector,
+                            song.getId(),
+                            song.getTitle(),
+                            song.getAlbumId(),
+                            song.getPath(),
+                            song.getImage(),
+                            song.getDescription(),
+                            song.getDuration(),
+                            song.getArtistName(),
+                            1
+
+                    );
+
+                    new FirestoreHelper().saveMusicPreference(musicPreference);
+                } else {
+                    Log.w("Firestore", "Sector not found for user: " + userId);
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Firestore", "Error fetching sector", e);
+            }
+        });
     }
 
 }

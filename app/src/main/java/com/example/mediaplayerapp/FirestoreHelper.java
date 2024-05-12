@@ -1,7 +1,13 @@
 package com.example.mediaplayerapp;
 
+import android.util.Log;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,12 +17,11 @@ public class FirestoreHelper {
     private List<String> sectorNames;
 
     public FirestoreHelper() {
-        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
         sectorNames = new ArrayList<>();
     }
 
-    public void fetchSectors(FirestoreCallback callback) {
+    public void fetchSectors(FirestoreCallback<List<String>> callback) {
         db.collection("sectors")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -35,8 +40,58 @@ public class FirestoreHelper {
                 });
     }
 
-    public interface FirestoreCallback {
-        void onCallback(List<String> sectorNames);
+    public void fetchUserSector(String userId, FirestoreCallback<String> callback) {
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists() && documentSnapshot.contains("sector")) {
+                        String sector = documentSnapshot.getString("sector");
+                        if (sector != null) {
+                            callback.onCallback(sector);
+                        } else {
+                            callback.onError(new Exception("Sector is null for user: " + userId));
+                        }
+                    } else {
+                        callback.onError(new Exception("User document is missing or does not contain a sector field."));
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
+//    public void saveMusicPreference(MusicPreference musicPreference) {
+//        db.collection("music_preferences")
+//                .add(musicPreference)
+//                .addOnSuccessListener(documentReference -> Log.d("Firestore", "Music preference successfully saved!"))
+//                .addOnFailureListener(e -> Log.e("Firestore", "Error saving music preference", e));
+//    }
+
+    public void saveMusicPreference(MusicPreference musicPreference) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference musicPrefsCollection = db.collection("music_preferences");
+
+        // Construct a unique key or identifier for each preference based on sector and songId
+        String documentKey = musicPreference.getSector() + "_" + musicPreference.getId();
+
+        DocumentReference docRef = musicPrefsCollection.document(documentKey);
+
+        // Using Firestore transactions to safely increment the count
+        db.runTransaction(transaction -> {
+                    DocumentSnapshot snapshot = transaction.get(docRef);
+                    if (snapshot.exists()) {
+                        // If the document exists, increment the count
+                        long newCount = snapshot.getLong("count") + 1;
+                        transaction.update(docRef, "count", newCount);
+                    } else {
+                        // If it does not exist, set the new MusicPreference with count 1
+                        transaction.set(docRef, musicPreference);
+                    }
+                    return null; // Transaction must return null if void
+                }).addOnSuccessListener(aVoid -> Log.d("Firestore", "Transaction success"))
+                .addOnFailureListener(e -> Log.e("Firestore", "Transaction failure", e));
+    }
+
+    public interface FirestoreCallback<T> {
+        void onCallback(T result);
         void onError(Exception e);
     }
 }
