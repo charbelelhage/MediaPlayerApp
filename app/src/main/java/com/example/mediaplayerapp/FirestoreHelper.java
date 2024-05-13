@@ -6,6 +6,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -89,6 +90,27 @@ public class FirestoreHelper {
                 }).addOnSuccessListener(aVoid -> Log.d("Firestore", "Transaction success"))
                 .addOnFailureListener(e -> Log.e("Firestore", "Transaction failure", e));
     }
+
+    public void fetchSongsBySector(String sector, FirestoreCallback<List<MusicPreference>> callback) {
+        db.collection("music_preferences")
+                .whereEqualTo("sector", sector)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<MusicPreference> musicPreferences = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            MusicPreference musicPreference = document.toObject(MusicPreference.class);
+                            musicPreferences.add(musicPreference);
+                        }
+                        // Optionally, sort musicPreferences by 'count' here in Java if needed
+                        musicPreferences.sort((mp1, mp2) -> Integer.compare(mp2.getCount(), mp1.getCount()));
+                        callback.onCallback(musicPreferences);
+                    } else {
+                        callback.onError(task.getException());
+                    }
+                });
+    }
+
 
     public interface FirestoreCallback<T> {
         void onCallback(T result);
