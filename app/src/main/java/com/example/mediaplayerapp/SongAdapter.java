@@ -84,6 +84,16 @@ public class SongAdapter extends ArrayAdapter<Song> {
                 }
             }
         });
+        AppCompatImageButton likeButton = listItem.findViewById(R.id.button_favorite);
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirestoreHelper.checkSongIfLiked(userId,currentSong);
+
+            }
+        });
+
         return listItem;
     }
     public String formatDuration(long durationInMillis) {
