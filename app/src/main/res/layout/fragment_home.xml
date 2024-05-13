@@ -13,33 +13,33 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:padding="16dp"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white" />
+        android:background="@color/white"
+        android:textColor="@color/colorPrimary" />
 
     <ListView
         android:id="@+id/listView_songs"
         android:layout_width="match_parent"
-        android:layout_height="399dp"
+        android:layout_height="299dp"
         android:layout_weight="1"
         android:divider="@null"
         android:dividerHeight="0dp" />
 
+
     <TextView
         android:id="@+id/textView_new_released_albums"
         android:layout_width="match_parent"
-        android:layout_height="28dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorPrimary"
-        android:padding="5dp"
+        android:layout_height="wrap_content"
         android:text="New Released Albums"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:textColor="@color/colorPrimary" />
 
     <ListView
         android:id="@+id/listView_albums"
         android:layout_width="match_parent"
-        android:layout_height="137dp"
+        android:layout_height="237dp"
         android:layout_weight="1"
         android:divider="@null"
         android:dividerHeight="0dp" />

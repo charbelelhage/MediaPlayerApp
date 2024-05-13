@@ -7,11 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Header layout included here -->
+
+    <include
+        layout="@layout/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="67dp" />
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_marginTop="?attr/actionBarSize"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
