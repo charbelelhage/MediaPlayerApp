@@ -8,14 +8,18 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FirestoreHelper {
 
-    private FirebaseFirestore db;
+    private static FirebaseFirestore db;
     private List<String> sectorNames;
+    private static List<Song> songsList;
 
     public FirestoreHelper() {
         db = FirebaseFirestore.getInstance();
@@ -110,6 +114,82 @@ public class FirestoreHelper {
                     }
                 });
     }
+    public static void checkSongIfLiked(String userId, Song currentSong){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference musicPrefsCollection = db.collection("users_liked_songs");
+
+        Query query = musicPrefsCollection.whereEqualTo("userId", userId)
+                .whereEqualTo("Id", currentSong.getId());
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot snapshot = task.getResult();
+                if (snapshot != null && !snapshot.isEmpty()) {
+                    // Record exists for the userId and songId, delete it
+                    for (DocumentSnapshot document : snapshot.getDocuments()) {
+                        document.getReference().delete();
+                        Log.d("TAG", "Deleted existing record");
+                    }
+                } else {
+                    // No record found for the userId and songId, add it
+                    Map<String, Object> songData = new HashMap<>();
+                    songData.put("userId", userId);
+                    songData.put("Id", currentSong.getId());
+                    songData.put("Title", currentSong.getTitle());
+                    songData.put("AlbumId", currentSong.getAlbumId());
+                    songData.put("Path", currentSong.getPath());
+                    songData.put("Image", currentSong.getImage());
+                    songData.put("Description", currentSong.getDescription());
+                    songData.put("Duration", currentSong.getDuration());
+                    songData.put("ArtistName", currentSong.getArtistName());
+
+                    musicPrefsCollection.add(songData)
+                            .addOnSuccessListener(documentReference -> {
+                                Log.d("TAG", "Record added with ID: " + documentReference.getId());
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG", "Error adding document", e);
+                            });
+                }
+            } else {
+                // Handle any errors
+                Log.e("TAG", "Error getting documents: ", task.getException());
+            }
+        });
+    }
+
+    public static void getSongsByUserId(String userId, FirestoreCallback<List<Song>> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        List<Song> songsList = new ArrayList<>();
+
+        db.collection("users_liked_songs")
+                .whereEqualTo("userId", userId)
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot snapshot = task.getResult();
+                        if (snapshot != null) {
+                            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                                Song song = new Song(
+                                        document.getString("Id"),
+                                        document.getString("Title"),
+                                        document.getLong("AlbumId"),
+                                        document.getString("Path"),
+                                        document.getString("Image"),
+                                        document.getString("Description"),
+                                        document.getString("Duration"),
+                                        document.getString("ArtistName")
+                                );
+                                songsList.add(song);
+                            }
+                        }
+                        callback.onCallback(songsList);
+                    } else {
+                        Log.e("TAG", "Error getting documents: ", task.getException());
+                        callback.onError(task.getException());
+                    }
+                });
+    }
+
 
 
     public interface FirestoreCallback<T> {
